@@ -1,23 +1,18 @@
 function parseTodoLine(line, fileName = '') {
-    const todoMatch = line.match(/\/\/\s*TODO\s+(.*)/);
-    if (!todoMatch) {
-        return null;
-    }
+    if (!line.includes('\/\/ TODO ')) return null;
 
-    const rawText = todoMatch[1].trim();
-    const importance = (rawText.match(/!/g) || []).length;
+    const rawText = line.split('\/\/ TODO ')[1].trim();
+    const importance = rawText.includes('!') ? rawText.split('!').length - 1 : 0;
 
     // "Имя; Дата; Текст"
-    const structuredMatch = rawText.match(
-        /^([^;]+);\s*(\d{4}-\d{2}-\d{2});\s*(.+)$/
-    );
+    const structuredMatch = rawText.split('; ');
 
-    if (structuredMatch) {
+    if (structuredMatch.length === 3) {
         return {
             importance,
-            user: structuredMatch[1].trim(),
-            date: structuredMatch[2].trim(),
-            comment: structuredMatch[3].trim(),
+            user: structuredMatch[0].trim(),
+            date: structuredMatch[1].trim(),
+            comment: structuredMatch[2].trim(),
             fileName,
         };
     }
