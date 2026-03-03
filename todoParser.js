@@ -1,10 +1,10 @@
 function parseTodoLine(line, fileName = '') {
     if (!line.includes('\/\/')) return null;
 
-    const commentPart = line.split('\/\/')[1].trim();
-    if (commentPart.length < 4 || commentPart.slice(0, 4).toLowerCase() !== 'todo') return null;
-    
-    const rawText = commentPart.slice(4).trim();
+    const todoMatch = line.match(/\/\/\s*todo:?\s+(.*)/i);
+    if (!todoMatch) return null;
+
+    const rawText = todoMatch[1].trim();
     const importance = rawText.includes('!') ? rawText.split('!').length - 1 : 0;
 
     const structuredMatch = rawText.split('; ');
