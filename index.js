@@ -39,6 +39,15 @@ function processCommand(command) {
         case "important":
             printTodos(todos.filter((todo) => todo.importance > 0));
             break;
+        case 'user': {
+            const username = args.join(' ').toLowerCase();
+            printTodos(
+                todos.filter(
+                    todo => todo.user && todo.user.toLowerCase() === username
+                )
+            );
+            break;
+        }
         case "sort": {
             const sortType = args[0];
             let sorted;
