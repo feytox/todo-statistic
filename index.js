@@ -2,7 +2,7 @@ const { getAllFilePathsWithExtension, readFile } = require("./fileSystem");
 const { readLine } = require("./console");
 const { getTodosFromFileContent } = require("./todoParser");
 const { printTodosTable } = require("./todoFormatter");
-const path = require('path');
+const path = require("path");
 
 const files = getFiles();
 const todos = getAllTodos();
@@ -11,8 +11,8 @@ console.log("Please, write your command!");
 readLine(processCommand);
 
 function getFiles() {
-    const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    return filePaths.map(filePath => ({
+    const filePaths = getAllFilePathsWithExtension(process.cwd(), "js");
+    return filePaths.map((filePath) => ({
         content: readFile(filePath),
         name: path.basename(filePath),
     }));
@@ -43,72 +43,76 @@ function processCommand(command) {
         case "important":
             printTodos(todos.filter((todo) => todo.importance > 0));
             break;
-        case 'user': {
-            const username = args.join(' ').toLowerCase();
-            printTodos(
-                todos.filter(
-                    todo => todo.user && todo.user.toLowerCase() === username
-                )
-            );
+        case "user": {
+            const username = args.join(" ").toLowerCase();
+            showTodosByUser(username);  
             break;
         }
         case "sort": {
-            const sortType = args[0];
-            let sorted;
-            switch (sortType) {
-                case "importance":
-                    sorted = [...todos].sort(
-                        (a, b) => b.importance - a.importance,
-                    );
-                    break;
-                case "user":
-                    sorted = [...todos].sort((a, b) => {
-                        if (!a.user && !b.user) return 0;
-                        if (!a.user) return 1;
-                        if (!b.user) return -1;
-                        return a.user
-                            .toLowerCase()
-                            .localeCompare(b.user.toLowerCase());
-                    });
-                    break;
-                case "date":
-                    sorted = [...todos].sort((a, b) => {
-                        if (!a.date && !b.date) return 0;
-                        if (!a.date) return 1;
-                        if (!b.date) return -1;
-                        return b.date.localeCompare(a.date);
-                    });
-                    break;
-                default:
-                    console.log("wrong sort argument");
-                    return;
-            }
-            printTodos(sorted);
+            showSortedTodos(args[0]);
             break;
         }
         case "date": {
-            const inputDate = args[0];
-            if (!inputDate) {
-                console.log("wrong date argument");
-                return;
-            }
-            const normalizeDate = (d) => {
-                const parts = d.split("-");
-                while (parts.length < 3) parts.push("00");
-                return parts.join("-");
-            };
-            const normalizedInput = normalizeDate(inputDate);
-            printTodos(
-                todos.filter(
-                    (todo) =>
-                        todo.date &&
-                        normalizeDate(todo.date) >= normalizedInput,
-                ),
-            );
+            showTodosAfterDate(args[0]);
             break;
         }
         default:
             console.log("wrong command");
             break;
     }
+}
+
+function showTodosByUser(username) {
+    printTodos(
+        todos.filter(
+            (todo) => todo.user && todo.user.toLowerCase() === username,
+        ),
+    );
+}
+
+function showSortedTodos(sortType) {
+    let sorted;
+    switch (sortType) {
+        case "importance":
+            sorted = [...todos].sort((a, b) => b.importance - a.importance);
+            break;
+        case "user":
+            sorted = [...todos].sort((a, b) => {
+                if (!a.user && !b.user) return 0;
+                if (!a.user) return 1;
+                if (!b.user) return -1;
+                return a.user.toLowerCase().localeCompare(b.user.toLowerCase());
+            });
+            break;
+        case "date":
+            sorted = [...todos].sort((a, b) => {
+                if (!a.date && !b.date) return 0;
+                if (!a.date) return 1;
+                if (!b.date) return -1;
+                return b.date.localeCompare(a.date);
+            });
+            break;
+        default:
+            console.log("wrong sort argument");
+            return;
+    }
+    printTodos(sorted);
+}
+
+function showTodosAfterDate(date) {
+    if (!date) {
+        console.log("wrong date argument");
+        return;
+    }
+    const normalizeDate = (d) => {
+        const parts = d.split("-");
+        while (parts.length < 3) parts.push("00");
+        return parts.join("-");
+    };
+    const normalizedInput = normalizeDate(date);
+    printTodos(
+        todos.filter(
+            (todo) => todo.date && normalizeDate(todo.date) >= normalizedInput,
+        ),
+    );
 }
