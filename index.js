@@ -2,6 +2,7 @@ const { getAllFilePathsWithExtension, readFile } = require("./fileSystem");
 const { readLine } = require("./console");
 const { getTodosFromFileContent } = require("./todoParser");
 const { printTodosTable } = require("./todoFormatter");
+const path = require('path');
 
 const files = getFiles();
 const todos = getAllTodos();
@@ -10,14 +11,17 @@ console.log("Please, write your command!");
 readLine(processCommand);
 
 function getFiles() {
-    const filePaths = getAllFilePathsWithExtension(process.cwd(), "js");
-    return filePaths.map((path) => readFile(path));
+    const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
+    return filePaths.map(filePath => ({
+        content: readFile(filePath),
+        name: path.basename(filePath),
+    }));
 }
 
 function getAllTodos() {
     const result = [];
-    for (const fileContent of files) {
-        result.push(...getTodosFromFileContent(fileContent));
+    for (const file of files) {
+        result.push(...getTodosFromFileContent(file.content, file.name));
     }
     return result;
 }
