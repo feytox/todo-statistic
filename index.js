@@ -72,6 +72,27 @@ function processCommand(command) {
             printTodos(sorted);
             break;
         }
+        case "date": {
+            const inputDate = args[0];
+            if (!inputDate) {
+                console.log("wrong date argument");
+                return;
+            }
+            const normalizeDate = (d) => {
+                const parts = d.split("-");
+                while (parts.length < 3) parts.push("00");
+                return parts.join("-");
+            };
+            const normalizedInput = normalizeDate(inputDate);
+            printTodos(
+                todos.filter(
+                    (todo) =>
+                        todo.date &&
+                        normalizeDate(todo.date) >= normalizedInput,
+                ),
+            );
+            break;
+        }
         default:
             console.log("wrong command");
             break;

@@ -4,7 +4,6 @@ function parseTodoLine(line, fileName = '') {
     const rawText = line.split('\/\/ TODO ')[1].trim();
     const importance = rawText.includes('!') ? rawText.split('!').length - 1 : 0;
 
-    // "Имя; Дата; Текст"
     const structuredMatch = rawText.split('; ');
 
     if (structuredMatch.length === 3) {
