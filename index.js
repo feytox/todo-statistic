@@ -1,6 +1,7 @@
 const { getAllFilePathsWithExtension, readFile } = require("./fileSystem");
 const { readLine } = require("./console");
 const { getTodosFromFileContent } = require("./todoParser");
+const { printTodosTable } = require("./todoFormatter");
 
 const files = getFiles();
 const todos = getAllTodos();
@@ -22,7 +23,7 @@ function getAllTodos() {
 }
 
 function printTodos(todoList) {
-    todoList.forEach((todo) => console.log(todo.comment));
+    printTodosTable(todoList);
 }
 
 function processCommand(command) {
