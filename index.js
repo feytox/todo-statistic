@@ -35,6 +35,9 @@ function processCommand(command) {
         case 'show':
             printTodos(todos);
             break;
+        case 'important':
+            printTodos(todos.filter(todo => todo.importance > 0));
+            break;
         default:
             console.log('wrong command');
             break;
